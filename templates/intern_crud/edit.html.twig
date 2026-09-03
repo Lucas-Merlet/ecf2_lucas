@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Intern{% endblock %}
+
+{% block body %}
+    <h1>Edit Intern</h1>
+
+    {{ include('intern_crud/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_intern_crud_index') }}">back to list</a>
+
+    {{ include('intern_crud/_delete_form.html.twig') }}
+{% endblock %}

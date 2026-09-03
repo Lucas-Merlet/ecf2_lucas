@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Intern index{% endblock %}
+
+{% block body %}
+    <h1>Intern index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Phone</th>
+                <th>PhotoPath</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for intern in interns %}
+            <tr>
+                <td>{{ intern.id }}</td>
+                <td>{{ intern.firstName }}</td>
+                <td>{{ intern.lastName }}</td>
+                <td>{{ intern.phone }}</td>
+                <td>{{ intern.photoPath }}</td>
+                <td>
+                    <a href="{{ path('app_intern_crud_show', {'id': intern.id}) }}">show</a>
+                    <a href="{{ path('app_intern_crud_edit', {'id': intern.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_intern_crud_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Intern{% endblock %}
+
+{% block body %}
+    <h1>Intern</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ intern.id }}</td>
+            </tr>
+            <tr>
+                <th>FirstName</th>
+                <td>{{ intern.firstName }}</td>
+            </tr>
+            <tr>
+                <th>LastName</th>
+                <td>{{ intern.lastName }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ intern.phone }}</td>
+            </tr>
+            <tr>
+                <th>PhotoPath</th>
+                <td>{{ intern.photoPath }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_intern_crud_index') }}">back to list</a>
+
+    <a href="{{ path('app_intern_crud_edit', {'id': intern.id}) }}">edit</a>
+
+    {{ include('intern_crud/_delete_form.html.twig') }}
+{% endblock %}
