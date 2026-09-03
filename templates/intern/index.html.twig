@@ -3,20 +3,26 @@
 {% block title %}Trombinoscope{% endblock %}
 
 {% block body %}
-    <h1>Trombinoscope</h1>
+    <div class="container">
+        <div class="page-head">
+            <h1>Trombinoscope</h1>
+            <a class="btn" href="{{ path('app_intern_crud_new') }}">+ Ajouter un stagiaire</a>
+        </div>
 
-    <div class="mosaic">
-        {% for intern in interns %}
-            <div class="intern-card">
-                <div class="intern-photo">
-                    {{ intern.firstName|first }}{{ intern.lastName|first }}
-                </div>
-                <span class="intern-name">
-                    {{ intern.firstName }} {{ intern.lastName }}
-                </span>
-            </div>
-        {% else %}
-            <p>Aucun stagiaire pour le moment.</p>
-        {% endfor %}
+        <div class="mosaic">
+            {% for intern in interns %}
+                <a class="intern-card" href="{{ path('app_intern_crud_edit', {id: intern.id}) }}">
+                    <div class="intern-photo">
+                        {{ intern.firstName|first }}{{ intern.lastName|first }}
+                    </div>
+                    <span class="intern-name">
+                        {{ intern.firstName }} {{ intern.lastName }}
+                    </span>
+                    <span class="intern-afpa">N° {{ intern.afpaNumber }}</span>
+                </a>
+            {% else %}
+                <p>Aucun stagiaire pour le moment.</p>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
