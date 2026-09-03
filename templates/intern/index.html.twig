@@ -3,23 +3,33 @@
 {% block title %}Trombinoscope{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="page-head">
-            <h1>Trombinoscope</h1>
-            <a class="btn" href="{{ path('app_intern_crud_new') }}">+ Ajouter un stagiaire</a>
-        </div>
+    <div class="container my-4">
+        <h1 class="mb-4">Trombinoscope</h1>
 
-        <div class="mosaic">
+        <div class="row g-4">
             {% for intern in interns %}
-                <a class="intern-card" href="{{ path('app_intern_crud_edit', {id: intern.id}) }}">
-                    <div class="intern-photo">
-                        {{ intern.firstName|first }}{{ intern.lastName|first }}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100 text-center shadow-sm">
+                        <div class="card-body">
+                            <div class="intern-photo mx-auto mb-3">
+                                {{ intern.firstName|first }}{{ intern.lastName|first }}
+                            </div>
+                            <h5 class="card-title mb-1">
+                                {{ intern.firstName }} {{ intern.lastName }}
+                            </h5>
+                            <p class="text-muted small mb-3">N° {{ intern.afpaNumber }}</p>
+
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ path('app_intern_crud_show', {id: intern.id}) }}"
+                                   class="btn btn-sm btn-outline-secondary">Infos</a>
+                                <a href="{{ path('app_intern_crud_edit', {id: intern.id}) }}"
+                                   class="btn btn-sm btn-outline-primary">Modifier</a>
+                                <a href="{{ path('app_intern_crud_show', {id: intern.id}) }}"
+                                   class="btn btn-sm btn-outline-danger">Supprimer</a>
+                            </div>
+                        </div>
                     </div>
-                    <span class="intern-name">
-                        {{ intern.firstName }} {{ intern.lastName }}
-                    </span>
-                    <span class="intern-afpa">N° {{ intern.afpaNumber }}</span>
-                </a>
+                </div>
             {% else %}
                 <p>Aucun stagiaire pour le moment.</p>
             {% endfor %}
