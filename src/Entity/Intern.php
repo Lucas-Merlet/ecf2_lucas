@@ -30,7 +30,7 @@ class Intern
     /**
      * @var Collection<int, Absence>
      */
-    #[ORM\OneToMany(targetEntity: Absence::class, mappedBy: 'Intern')]
+    #[ORM\OneToMany(targetEntity: Absence::class, mappedBy: 'intern')]
     private Collection $absences;
 
     #[ORM\Column(length: 20, unique: true)]

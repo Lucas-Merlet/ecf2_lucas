@@ -1,38 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Intern{% endblock %}
+{% block title %}{{ intern.firstName }} {{ intern.lastName }}{% endblock %}
 
 {% block body %}
-    <h1>Intern</h1>
+    <div class="container my-4">
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ intern.id }}</td>
-            </tr>
-            <tr>
-                <th>FirstName</th>
-                <td>{{ intern.firstName }}</td>
-            </tr>
-            <tr>
-                <th>LastName</th>
-                <td>{{ intern.lastName }}</td>
-            </tr>
-            <tr>
-                <th>Phone</th>
-                <td>{{ intern.phone }}</td>
-            </tr>
-            <tr>
-                <th>PhotoPath</th>
-                <td>{{ intern.photoPath }}</td>
-            </tr>
-        </tbody>
-    </table>
+        {# --- Infos du stagiaire --- #}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h1 class="h3 mb-3">{{ intern.firstName }} {{ intern.lastName }}</h1>
+                <p class="mb-1"><strong>N° AFPA :</strong> {{ intern.afpaNumber }}</p>
+                <p class="mb-0"><strong>Téléphone :</strong> {{ intern.phone }}</p>
+            </div>
+        </div>
 
-    <a href="{{ path('app_intern_crud_index') }}">back to list</a>
+        {# --- Liste des absences --- #}
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Absences ({{ intern.absences|length }})</span>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_absence_crud_new') }}" class="btn btn-sm btn-success">
+                        + Ajouter une absence
+                    </a>
+                {% endif %}
+            </div>
 
-    <a href="{{ path('app_intern_crud_edit', {'id': intern.id}) }}">edit</a>
+            <div class="card-body">
+                {% if intern.absences is empty %}
+                    <p class="text-muted mb-0">Aucune absence enregistrée.</p>
+                {% else %}
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Motif</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for absence in intern.absences %}
+                                <tr>
+                                    <td>{{ absence.date|date('d/m/Y') }}</td>
+                                    <td>{{ absence.reason.label }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
 
-    {{ include('intern_crud/_delete_form.html.twig') }}
+        {# --- Actions --- #}
+        <div class="mt-4 d-flex gap-2">
+            <a href="{{ path('app_intern_index') }}" class="btn btn-outline-secondary">Retour au trombinoscope</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_intern_crud_edit', {'id': intern.id}) }}" class="btn btn-outline-primary">Modifier</a>
+            {% endif %}
+        </div>
+
+    </div>
 {% endblock %}
