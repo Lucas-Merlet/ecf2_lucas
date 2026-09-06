@@ -135,6 +135,27 @@ class Intern
 
         return $this;
     }
+    public function countUnexcusedAbsences(): int
+    {
+        $count = 0;
+
+        foreach ($this->absences as $absence) {
+            if ($absence->getReason() !== null
+                && $absence->getReason()->getLabel() === 'Sans motif') {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Is this intern flagged (more than 5 unexcused absences)?
+     */
+    public function isFlagged(): bool
+    {
+        return $this->countUnexcusedAbsences() > 5;
+    }
     public function __toString(): string
     {
         return $this->firstName . ' ' . $this->lastName;

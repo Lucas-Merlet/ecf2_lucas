@@ -8,7 +8,12 @@
         {# --- Infos du stagiaire --- #}
         <div class="card mb-4">
             <div class="card-body">
-                <h1 class="h3 mb-3">{{ intern.firstName }} {{ intern.lastName }}</h1>
+                <h1 class="h3 mb-3 {{ intern.isFlagged ? 'text-danger fw-bold' : '' }}">
+                    {{ intern.firstName }} {{ intern.lastName }}
+                    {% if intern.isFlagged %}
+                        <span title="Plus de 5 absences sans motif">⚠️</span>
+                    {% endif %}
+                </h1>
                 <p class="mb-1"><strong>N° AFPA :</strong> {{ intern.afpaNumber }}</p>
                 <p class="mb-0"><strong>Téléphone :</strong> {{ intern.phone }}</p>
             </div>
