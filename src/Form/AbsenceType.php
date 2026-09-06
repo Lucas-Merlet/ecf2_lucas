@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Absence;
+use App\Entity\Intern;
+use App\Entity\Reason;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class AbsenceType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('intern', EntityType::class, [
+                'class' => Intern::class,
+                'choice_label' => 'lastName',
+                'label' => 'Stagiaire',
+            ])
+            ->add('date', DateType::class, [
+                'widget' => 'single_text',
+                'label' => "Date de l'absence",
+            ])
+            ->add('reason', EntityType::class, [
+                'class' => Reason::class,
+                'choice_label' => 'label',
+                'label' => 'Motif',
+            ])
+            ->add('proofPath', null, [
+                'required' => false,
+                'label' => 'Justificatif (nom du fichier)',
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Absence::class,
+        ]);
+    }
+}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Absence index{% endblock %}
+
+{% block body %}
+    <h1>Absence index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>ProofPath</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for absence in absences %}
+            <tr>
+                <td>{{ absence.id }}</td>
+                <td>{{ absence.date ? absence.date|date('Y-m-d') : '' }}</td>
+                <td>{{ absence.proofPath }}</td>
+                <td>
+                    <a href="{{ path('app_absence_crud_show', {'id': absence.id}) }}">show</a>
+                    <a href="{{ path('app_absence_crud_edit', {'id': absence.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_absence_crud_new') }}">Create new</a>
+{% endblock %}

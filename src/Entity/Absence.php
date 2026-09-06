@@ -62,9 +62,9 @@ class Absence
         return $this->intern;
     }
 
-    public function setIntern(?Intern $Intern): static
+    public function setIntern(?Intern $intern): static
     {
-        $this->Intern = $intern;
+        $this->intern = $intern;
 
         return $this;
     }
