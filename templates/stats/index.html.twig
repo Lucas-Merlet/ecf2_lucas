@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des absences{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <h1 class="mb-4">Statistiques des absences</h1>
+
+        <div class="row">
+            {# --- Le diagramme --- #}
+            <div class="col-lg-7 mb-4">
+                <div class="card">
+                    <div class="card-header">Classement des stagiaires par absences</div>
+                    <div class="card-body">
+                        <canvas id="absenceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            {# --- Le tableau --- #}
+            <div class="col-lg-5 mb-4">
+                <div class="card">
+                    <div class="card-header">Détail</div>
+                    <div class="card-body">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Stagiaire</th>
+                                    <th class="text-end">Absences</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in ranking %}
+                                    <tr>
+                                        <td>{{ line.firstName }} {{ line.lastName }}</td>
+                                        <td class="text-end">{{ line.total }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="2">Aucune absence enregistrée.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# --- Données envoyées au graphique --- #}
+    <script>
+        const chartLabels = {{ ranking|map(line => line.firstName ~ ' ' ~ line.lastName)|json_encode|raw }};
+        const chartData = {{ ranking|map(line => line.total)|json_encode|raw }};
+    </script>
+
+    {# --- Chart.js + création du graphique --- #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        new Chart(document.getElementById('absenceChart'), {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: "Nombre d'absences",
+                    data: chartData,
+                    backgroundColor: '#1e3a5f'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+    </script>
+{% endblock %}

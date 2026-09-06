@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Absence;
 use App\Entity\Intern;
 use App\Entity\Reason;
 use App\Entity\User;
@@ -20,15 +21,17 @@ class AppFixtures extends Fixture
     {
         // --- The 4 absence reasons ---
         $reasonLabels = ['Maladie', 'Sans motif', 'Absence légale', 'Accident du travail'];
+        $reasons = [];
 
         foreach ($reasonLabels as $label) {
             $reason = new Reason();
             $reason->setLabel($label);
             $manager->persist($reason);
+            $reasons[$label] = $reason; // keep a reference by label
         }
 
-                // --- The 12 trainees (AFPA number, first name, last name, phone) ---
-        $interns = [
+        // --- The 12 trainees ---
+        $internsData = [
             ['22116576', 'Adila', 'Kehlaoui', '0601020304'],
             ['26020093', 'Mohammed', 'Benerroua', '0611121314'],
             ['26020095', 'Ghislène', 'Bellia', '0621222324'],
@@ -43,13 +46,41 @@ class AppFixtures extends Fixture
             ['26028145', 'Mélanie', 'Saez', '0612131415'],
         ];
 
-        foreach ($interns as [$afpaNumber, $firstName, $lastName, $phone]) {
+        $interns = [];
+        foreach ($internsData as [$afpaNumber, $firstName, $lastName, $phone]) {
             $intern = new Intern();
             $intern->setAfpaNumber($afpaNumber);
             $intern->setFirstName($firstName);
             $intern->setLastName($lastName);
             $intern->setPhone($phone);
             $manager->persist($intern);
+            $interns[] = $intern; // keep references
+        }
+
+        // --- Sample absences (date, intern index, reason label) ---
+        $absencesData = [
+            // Intern 0 (Adila) : 6 "Sans motif" -> should appear in red later
+            ['2026-09-01', 0, 'Sans motif'],
+            ['2026-09-02', 0, 'Sans motif'],
+            ['2026-09-03', 0, 'Sans motif'],
+            ['2026-09-08', 0, 'Sans motif'],
+            ['2026-09-09', 0, 'Sans motif'],
+            ['2026-09-10', 0, 'Sans motif'],
+            // Others
+            ['2026-09-04', 1, 'Maladie'],
+            ['2026-09-05', 2, 'Absence légale'],
+            ['2026-09-11', 3, 'Accident du travail'],
+            ['2026-09-12', 1, 'Sans motif'],
+            ['2026-09-15', 4, 'Maladie'],
+            ['2026-09-16', 4, 'Maladie'],
+        ];
+
+        foreach ($absencesData as [$date, $internIndex, $reasonLabel]) {
+            $absence = new Absence();
+            $absence->setDate(new \DateTime($date));
+            $absence->setIntern($interns[$internIndex]);
+            $absence->setReason($reasons[$reasonLabel]);
+            $manager->persist($absence);
         }
 
         // --- The single admin account ---

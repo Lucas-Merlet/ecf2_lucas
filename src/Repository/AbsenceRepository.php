@@ -16,28 +16,20 @@ class AbsenceRepository extends ServiceEntityRepository
         parent::__construct($registry, Absence::class);
     }
 
-    //    /**
-    //     * @return Absence[] Returns an array of Absence objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Absence
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Return each intern with their total number of absences,
+     * ordered from most to least absent.
+     *
+     * @return array<int, array{firstName: string, lastName: string, total: int}>
+     */
+    public function countAbsencesByIntern(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->select('i.firstName AS firstName', 'i.lastName AS lastName', 'COUNT(a.id) AS total')
+            ->join('a.intern', 'i')
+            ->groupBy('i.id')
+            ->orderBy('total', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }
