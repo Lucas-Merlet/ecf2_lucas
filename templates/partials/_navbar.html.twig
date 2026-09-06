@@ -11,11 +11,16 @@
         </button>
 
         <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                        <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                {# --- Liens visibles par TOUS (admin + visiteur) --- #}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_intern_index') }}">Trombinoscope</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_stats') }}">Statistiques</a>
+                </li>
 
+                {# --- Liens réservés à l'ADMIN --- #}
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
                         <a class="btn btn-success btn-sm" href="{{ path('app_intern_crud_new') }}">
