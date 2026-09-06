@@ -24,7 +24,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>Absences ({{ intern.absences|length }})</span>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_absence_crud_new') }}" class="btn btn-sm btn-success">
+                    <a href="{{ path('app_absence_crud_new', {intern: intern.id}) }}" class="btn btn-sm btn-success">
                         + Ajouter une absence
                     </a>
                 {% endif %}

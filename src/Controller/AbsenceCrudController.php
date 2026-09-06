@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\InternRepository;
 
 #[Route('/absence/crud')]
 final class AbsenceCrudController extends AbstractController
@@ -21,11 +22,20 @@ final class AbsenceCrudController extends AbstractController
             'absences' => $absenceRepository->findAll(),
         ]);
     }
-
     #[Route('/new', name: 'app_absence_crud_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, InternRepository $internRepository): Response
     {
         $absence = new Absence();
+
+        // If an intern id is passed in the URL (?intern=5), pre-select that intern.
+        $internId = $request->query->get('intern');
+        if ($internId !== null) {
+            $intern = $internRepository->find($internId);
+            if ($intern !== null) {
+                $absence->setIntern($intern);
+            }
+        }
+
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
