@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
         <a class="navbar-brand" href="{{ path('app_intern_index') }}">
             AFPA · Gestion des absences
@@ -15,11 +15,30 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_intern_index') }}">Trombinoscope</a>
                 </li>
-                <li class="nav-item">
-                    <a class="btn btn-success btn-sm" href="{{ path('app_intern_crud_new') }}">
-                        + Ajouter un stagiaire
-                    </a>
-                </li>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="btn btn-success btn-sm" href="{{ path('app_intern_crud_new') }}">
+                            + Ajouter un stagiaire
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="navbar-text text-light me-2">
+                            {{ app.user.userIdentifier }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm" href="{{ path('app_logout') }}">
+                            Déconnexion
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm" href="{{ path('app_login') }}">
+                            Connexion
+                        </a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
