@@ -1,37 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Absence index{% endblock %}
+{% block title %}Gestion des absences{% endblock %}
 
 {% block body %}
-    <h1>Absence index</h1>
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Gestion des absences</h1>
+            <a href="{{ path('app_absence_crud_new') }}" class="btn btn-success">
+                + Ajouter une absence
+            </a>
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Date</th>
-                <th>ProofPath</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for absence in absences %}
-            <tr>
-                <td>{{ absence.id }}</td>
-                <td>{{ absence.date ? absence.date|date('Y-m-d') : '' }}</td>
-                <td>{{ absence.proofPath }}</td>
-                <td>
-                    <a href="{{ path('app_absence_crud_show', {'id': absence.id}) }}">show</a>
-                    <a href="{{ path('app_absence_crud_edit', {'id': absence.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_absence_crud_new') }}">Create new</a>
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Stagiaire</th>
+                            <th>Date</th>
+                            <th>Motif</th>
+                            <th>Justificatif</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for absence in absences %}
+                            <tr>
+                                <td>{{ absence.intern.firstName }} {{ absence.intern.lastName }}</td>
+                                <td>{{ absence.date|date('d/m/Y') }}</td>
+                                <td>{{ absence.reason.label }}</td>
+                                <td>
+                                    {% if absence.proofPath %}
+                                        <a href="{{ asset('uploads/proofs/' ~ absence.proofPath) }}"
+                                           target="_blank" class="btn btn-sm btn-outline-secondary">PDF</a>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ path('app_absence_crud_edit', {id: absence.id}) }}"
+                                       class="btn btn-sm btn-outline-primary">Modifier</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    Aucune absence enregistrée.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

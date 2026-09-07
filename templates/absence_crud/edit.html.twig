@@ -1,13 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Absence{% endblock %}
+{% block title %}Modifier une absence{% endblock %}
 
 {% block body %}
-    <h1>Edit Absence</h1>
-
-    {{ include('absence_crud/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_absence_crud_index') }}">back to list</a>
-
-    {{ include('absence_crud/_delete_form.html.twig') }}
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="h4 mb-0">Modifier une absence</h1>
+                    </div>
+                    <div class="card-body">
+                        {{ include('absence_crud/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

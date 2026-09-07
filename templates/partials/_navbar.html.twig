@@ -23,6 +23,9 @@
                 {# --- Liens réservés à l'ADMIN --- #}
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_absence_crud_index') }}">Gérer les absences</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="btn btn-success btn-sm" href="{{ path('app_intern_crud_new') }}">
                             + Ajouter un stagiaire
                         </a>
