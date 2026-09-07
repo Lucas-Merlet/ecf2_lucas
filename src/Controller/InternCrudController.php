@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/intern/crud')]
 final class InternCrudController extends AbstractController
@@ -23,13 +24,15 @@ final class InternCrudController extends AbstractController
     }
 
     #[Route('/new', name: 'app_intern_crud_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $intern = new Intern();
         $form = $this->createForm(InternType::class, $intern);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->handlePhotoUpload($form, $intern, $slugger);
+
             $entityManager->persist($intern);
             $entityManager->flush();
 
@@ -51,12 +54,14 @@ final class InternCrudController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_intern_crud_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Intern $intern, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Intern $intern, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(InternType::class, $intern);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->handlePhotoUpload($form, $intern, $slugger);
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_intern_crud_index', [], Response::HTTP_SEE_OTHER);
@@ -77,5 +82,26 @@ final class InternCrudController extends AbstractController
         }
 
         return $this->redirectToRoute('app_intern_crud_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Handle the photo upload: rename safely, move it, store its name.
+     */
+    private function handlePhotoUpload($form, Intern $intern, SluggerInterface $slugger): void
+    {
+        $photoFile = $form->get('photo')->getData();
+
+        if ($photoFile) {
+            $originalName = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeName = $slugger->slug($originalName);
+            $newFilename = $safeName . '-' . uniqid() . '.' . $photoFile->guessExtension();
+
+            $photoFile->move(
+                $this->getParameter('photos_directory'),
+                $newFilename
+            );
+
+            $intern->setPhotoPath($newFilename);
+        }
     }
 }

@@ -5,12 +5,13 @@ namespace App\Controller;
 use App\Entity\Absence;
 use App\Form\AbsenceType;
 use App\Repository\AbsenceRepository;
+use App\Repository\InternRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Repository\InternRepository;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/absence/crud')]
 final class AbsenceCrudController extends AbstractController
@@ -22,8 +23,9 @@ final class AbsenceCrudController extends AbstractController
             'absences' => $absenceRepository->findAll(),
         ]);
     }
+
     #[Route('/new', name: 'app_absence_crud_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, InternRepository $internRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, InternRepository $internRepository, SluggerInterface $slugger): Response
     {
         $absence = new Absence();
 
@@ -40,6 +42,8 @@ final class AbsenceCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->handleProofUpload($form, $absence, $slugger);
+
             $entityManager->persist($absence);
             $entityManager->flush();
 
@@ -61,12 +65,14 @@ final class AbsenceCrudController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_absence_crud_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Absence $absence, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Absence $absence, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->handleProofUpload($form, $absence, $slugger);
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_absence_crud_index', [], Response::HTTP_SEE_OTHER);
@@ -87,5 +93,26 @@ final class AbsenceCrudController extends AbstractController
         }
 
         return $this->redirectToRoute('app_absence_crud_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Handle the proof (PDF) upload: rename safely, move it, store its name.
+     */
+    private function handleProofUpload($form, Absence $absence, SluggerInterface $slugger): void
+    {
+        $proofFile = $form->get('proof')->getData();
+
+        if ($proofFile) {
+            $originalName = pathinfo($proofFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeName = $slugger->slug($originalName);
+            $newFilename = $safeName . '-' . uniqid() . '.' . $proofFile->guessExtension();
+
+            $proofFile->move(
+                $this->getParameter('proofs_directory'),
+                $newFilename
+            );
+
+            $absence->setProofPath($newFilename);
+        }
     }
 }

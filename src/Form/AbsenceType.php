@@ -10,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 class AbsenceType extends AbstractType
 {
@@ -30,9 +32,17 @@ class AbsenceType extends AbstractType
                 'choice_label' => 'label',
                 'label' => 'Motif',
             ])
-            ->add('proofPath', null, [
+            ->add('proof', FileType::class, [
+                'label' => 'Justificatif (PDF)',
+                'mapped' => false,
                 'required' => false,
-                'label' => 'Justificatif (nom du fichier)',
+                'constraints' => [
+                    new File(
+                        maxSize: '5M',
+                        mimeTypes: ['application/pdf'],
+                        mimeTypesMessage: 'Merci de choisir un fichier PDF.',
+                    ),
+                ],
             ])
         ;
     }
