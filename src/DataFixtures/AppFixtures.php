@@ -32,29 +32,30 @@ class AppFixtures extends Fixture
 
         // --- The 12 trainees ---
         $internsData = [
-            ['22116576', 'Adila', 'Kehlaoui', '0601020304'],
-            ['26020093', 'Mohammed', 'Benerroua', '0611121314'],
-            ['26020095', 'Ghislène', 'Bellia', '0621222324'],
-            ['26020096', 'Aurèle', 'Camps', '0631323334'],
-            ['26020097', 'Nelly', 'Fabre', '0641424344'],
-            ['26020141', 'Sarah', 'Casabianca', '0651525354'],
-            ['26020143', 'Juan', 'Rojas Cuicas', '0661626364'],
-            ['26020156', 'Lucas', 'Merlet', '0671727374'],
-            ['26020263', 'Nemo', 'Capitaine', '0681828384'],
-            ['26020268', 'Nathanael', 'Kenzey', '0691929394'],
-            ['26020916', 'Anthony', 'Lutard', '0602030405'],
-            ['26028145', 'Mélanie', 'Saez', '0612131415'],
+            ['22116576', 'Adila', 'Kehlaoui', '0601020304', 'adila-6a9e5f9e248c6.webp'],
+            ['26020093', 'Mohammed', 'Benerroua', '0611121314', 'mohammed-6a9e643dd4858.webp'],
+            ['26020095', 'Ghislène', 'Bellia', '0621222324', 'ghislene-6a9e6449cc17c.webp'],
+            ['26020096', 'Aurèle', 'Camps', '0631323334', 'aurele-6a9e645352f06.webp'],
+            ['26020097', 'Nelly', 'Fabre', '0641424344', 'nelly-6a9e645be0113.webp'],
+            ['26020141', 'Sarah', 'Casabianca', '0651525354', 'sarah-6a9e6464dc15f.webp'],
+            ['26020143', 'Juan', 'Rojas Cuicas', '0661626364', 'juan-6a9e646fd9a61.webp'],
+            ['26020156', 'Lucas', 'Merlet', '0671727374', 'lucas-6a9e647988c11.webp'],
+            ['26020263', 'Nemo', 'Capitaine', '0681828384', 'nemo-6a9e648283451.webp'],
+            ['26020268', 'Nathanael', 'Kenzey', '0691929394', 'nathanael-6a9e648d73890.webp'],
+            ['26020916', 'Anthony', 'Lutard', '0602030405', 'anthony-6a9e649468101.webp'],
+            ['26028145', 'Mélanie', 'Saez', '0612131415', 'melanie-6a9e649a84c14.webp'],
         ];
 
         $interns = [];
-        foreach ($internsData as [$afpaNumber, $firstName, $lastName, $phone]) {
+        foreach ($internsData as [$afpaNumber, $firstName, $lastName, $phone, $photo]) {
             $intern = new Intern();
             $intern->setAfpaNumber($afpaNumber);
             $intern->setFirstName($firstName);
             $intern->setLastName($lastName);
             $intern->setPhone($phone);
+            $intern->setPhotoPath($photo);
             $manager->persist($intern);
-            $interns[] = $intern; // keep references
+            $interns[] = $intern;
         }
 
         // --- Sample absences (date, intern index, reason label) ---
