@@ -36,6 +36,9 @@ class Intern
     #[ORM\Column(length: 20, unique: true)]
     private ?string $afpaNumber = null;
 
+        #[ORM\Column(options: ['default' => false])]
+    private bool $archived = false;
+
     public function __construct()
     {
         $this->absences = new ArrayCollection();
@@ -159,5 +162,17 @@ class Intern
     public function __toString(): string
     {
         return $this->firstName . ' ' . $this->lastName;
+    }
+
+    public function isArchived(): ?bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived): static
+    {
+        $this->archived = $archived;
+
+        return $this;
     }
 }

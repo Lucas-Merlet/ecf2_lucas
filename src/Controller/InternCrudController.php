@@ -73,6 +73,28 @@ final class InternCrudController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/archive', name: 'app_intern_crud_archive', methods: ['POST'])]
+    public function archive(Request $request, Intern $intern, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('archive'.$intern->getId(), $request->getPayload()->getString('_token'))) {
+            $intern->setArchived(true);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_intern_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/restore', name: 'app_intern_crud_restore', methods: ['POST'])]
+    public function restore(Request $request, Intern $intern, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('restore'.$intern->getId(), $request->getPayload()->getString('_token'))) {
+            $intern->setArchived(false);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_intern_index', [], Response::HTTP_SEE_OTHER);
+    }
+
     #[Route('/{id}', name: 'app_intern_crud_delete', methods: ['POST'])]
     public function delete(Request $request, Intern $intern, EntityManagerInterface $entityManager): Response
     {
@@ -81,7 +103,7 @@ final class InternCrudController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_intern_crud_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_intern_index', [], Response::HTTP_SEE_OTHER);
     }
 
     /**

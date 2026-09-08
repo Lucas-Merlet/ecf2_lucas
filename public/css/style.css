@@ -66,3 +66,14 @@ h1 {
     font-weight: 600;
     text-align: center;
 }
+
+.card-archived {
+    position: relative;
+    opacity: 0.5;
+    filter: grayscale(100%) blur(1.5px);
+    transition: all 0.2s ease;
+}
+.card-archived:hover {
+    opacity: 1;
+    filter: grayscale(0%) blur(0);
+}

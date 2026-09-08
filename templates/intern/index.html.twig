@@ -4,21 +4,24 @@
 
 {% block body %}
     <div class="container my-4">
+        <h1 class="mb-4">Trombinoscope</h1>
 
         <div class="row g-4">
             {% for intern in interns %}
-                <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="card h-100 text-center shadow-sm">
+                <div class="col-12 col-md-4">
+                    <div class="card h-100 text-center shadow-sm {{ intern.archived ? 'card-archived' : '' }}">
                         <div class="card-body">
+
                             {% if intern.photoPath %}
                                 <img src="{{ asset('uploads/photos/' ~ intern.photoPath) }}"
-                                    alt="Photo de {{ intern.firstName }}"
-                                    class="intern-photo mx-auto mb-3">
+                                     alt="Photo de {{ intern.firstName }}"
+                                     class="intern-photo mx-auto mb-3">
                             {% else %}
                                 <div class="intern-photo mx-auto mb-3">
                                     {{ intern.firstName|first }}{{ intern.lastName|first }}
                                 </div>
-                            {% endif %}   
+                            {% endif %}
+
                             <h5 class="card-title mb-1 {{ intern.isFlagged ? 'text-danger fw-bold' : '' }}">
                                 {{ intern.firstName }} {{ intern.lastName }}
                                 {% if intern.isFlagged %}
@@ -26,15 +29,46 @@
                                 {% endif %}
                             </h5>
                             <p class="text-muted small mb-3">N° {{ intern.afpaNumber }}</p>
-                            <div class="d-flex justify-content-center gap-2">
+
+                            {% if intern.archived %}
+                                <span class="badge bg-secondary mb-3">Archivé</span>
+                            {% endif %}
+
+                            <div class="d-flex justify-content-center flex-wrap gap-2">
                                 <a href="{{ path('app_intern_crud_show', {id: intern.id}) }}"
                                    class="btn btn-sm btn-outline-secondary">Infos</a>
 
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <a href="{{ path('app_intern_crud_edit', {id: intern.id}) }}"
                                        class="btn btn-sm btn-outline-primary">Modifier</a>
-                                    <a href="{{ path('app_intern_crud_show', {id: intern.id}) }}"
-                                       class="btn btn-sm btn-outline-danger">Supprimer</a>
+
+                                    {% if intern.archived %}
+                                        {# --- Réintégrer --- #}
+                                        <form method="post"
+                                              action="{{ path('app_intern_crud_restore', {id: intern.id}) }}"
+                                              onsubmit="return confirm('Réintégrer ce stagiaire dans la formation ?');">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('restore' ~ intern.id) }}">
+                                            <button class="btn btn-sm btn-success">Réintégrer</button>
+                                        </form>
+                                        {# --- Supprimer définitivement --- #}
+                                        <form method="post"
+                                              action="{{ path('app_intern_crud_delete', {id: intern.id}) }}"
+                                              onsubmit="return confirm('Supprimer DÉFINITIVEMENT ce stagiaire et toutes ses absences ? Cette action est irréversible.');">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ intern.id) }}">
+                                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                                        </form>
+                                    {% else %}
+                                        {# --- Archiver --- #}
+                                        <form method="post"
+                                              action="{{ path('app_intern_crud_archive', {id: intern.id}) }}"
+                                              onsubmit="return confirm('Archiver ce stagiaire ? Il sera retiré du trombinoscope public.');">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('archive' ~ intern.id) }}">
+                                            <button class="btn btn-sm btn-outline-warning">Archiver</button>
+                                        </form>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         </div>
