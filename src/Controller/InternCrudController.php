@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Intern;
 use App\Form\InternType;
-use App\Repository\InternRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,12 +14,10 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/intern/crud')]
 final class InternCrudController extends AbstractController
 {
-    #[Route(name: 'app_intern_crud_index', methods: ['GET'])]
-    public function index(InternRepository $internRepository): Response
+        #[Route(name: 'app_intern_crud_index', methods: ['GET'])]
+    public function index(): Response
     {
-        return $this->render('intern_crud/index.html.twig', [
-            'interns' => $internRepository->findAll(),
-        ]);
+        return $this->redirectToRoute('app_intern_index');
     }
 
     #[Route('/new', name: 'app_intern_crud_new', methods: ['GET', 'POST'])]
