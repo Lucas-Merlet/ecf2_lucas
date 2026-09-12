@@ -1,53 +1,58 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="{{ path('app_intern_index') }}">
-            AFPA · Gestion des absences
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#mainNav" aria-controls="mainNav"
-                aria-expanded="false" aria-label="Menu">
-            <span class="navbar-toggler-icon"></span>
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        {# Bouton menu (☰) à gauche #}
+        <button class="btn btn-outline-light" type="button"
+                data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas"
+                aria-controls="menuOffcanvas">
+            ☰ Menu
         </button>
 
-        <div class="collapse navbar-collapse" id="mainNav">
-                        <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
-                {# --- Liens visibles par TOUS (admin + visiteur) --- #}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_intern_index') }}">Trombinoscope</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_stats') }}">Statistiques</a>
-                </li>
-
-                {# --- Liens réservés à l'ADMIN --- #}
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_absence_crud_index') }}">Gérer les absences</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-success btn-sm" href="{{ path('app_intern_crud_new') }}">
-                            + Ajouter un stagiaire
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="navbar-text text-light me-2">
-                            {{ app.user.userIdentifier }}
-                        </span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light btn-sm" href="{{ path('app_logout') }}">
-                            Déconnexion
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light btn-sm" href="{{ path('app_login') }}">
-                            Connexion
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
+        {# Titre à droite #}
+        <a class="navbar-brand mb-0" href="{{ path('app_intern_index') }}">
+            AFPA · Gestion des absences
+        </a>
     </div>
 </nav>
+
+{# ===== L'OFFCANVAS (panneau latéral) ===== #}
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="menuOffcanvasLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+    </div>
+
+    <div class="offcanvas-body">
+
+        {# --- Navigation --- #}
+        <nav class="nav flex-column mb-4">
+            <a class="nav-link" href="{{ path('app_intern_index') }}">Trombinoscope</a>
+            <a class="nav-link" href="{{ path('app_stats') }}">Statistiques (détail)</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a class="nav-link" href="{{ path('app_absence_crud_index') }}">Gérer les absences</a>
+                <a class="nav-link" href="{{ path('app_intern_crud_new') }}">+ Ajouter un stagiaire</a>
+                <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion ({{ app.user.userIdentifier }})</a>
+            {% else %}
+                <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+            {% endif %}
+        </nav>
+
+        {# --- Les statistiques DANS l'offcanvas (le critère !) --- #}
+        <h6 class="text-muted text-uppercase small">Classement des absences</h6>
+        <table class="table table-sm">
+            <thead>
+                <tr><th>Stagiaire</th><th class="text-end">Abs.</th></tr>
+            </thead>
+            <tbody>
+                {% for line in absenceRepo.countAbsencesByIntern() %}
+                    <tr>
+                        <td>{{ line.firstName }} {{ line.lastName }}</td>
+                        <td class="text-end">{{ line.total }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="2" class="text-muted">Aucune absence.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
